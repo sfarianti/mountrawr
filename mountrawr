@@ -1,0 +1,50 @@
+#!/usr/bin/env php
+<?php
+
+require_once __DIR__ . '/bootstrap.php';
+
+use App\Core\Migrator;
+use Database\Seeders\DatabaseSeeder;
+
+$command = $argv[1] ?? 'help';
+
+switch ($command) {
+    case 'migrate':
+        Migrator::migrate();
+        break;
+
+    case 'migrate:rollback':
+        Migrator::rollback();
+        break;
+
+    case 'migrate:fresh':
+        Migrator::fresh();
+        break;
+
+    case 'migrate:status':
+        Migrator::status();
+        break;
+
+    case 'db:seed':
+        require_once __DIR__ . '/database/seeders/DatabaseSeeder.php';
+        DatabaseSeeder::run();
+        break;
+
+    case 'serve':
+        $port = $argv[2] ?? 8000;
+        echo "Starting Mountrawr server on http://localhost:{$port}...\n";
+        passthru("php -S localhost:{$port} -t public");
+        break;
+
+    default:
+        echo "Mountrawr CLI Tool\n";
+        echo "Usage: php mountrawr [command]\n\n";
+        echo "Available commands:\n";
+        echo "  migrate            Jalankan migration yang belum dieksekusi\n";
+        echo "  migrate:rollback   Batalkan batch migration terakhir\n";
+        echo "  migrate:fresh      Drop semua tabel dan jalankan migration ulang\n";
+        echo "  migrate:status     Lihat status migration\n";
+        echo "  db:seed            Isi data awal database\n";
+        echo "  serve [port]       Jalankan dev server (default port 8000)\n";
+        break;
+}
